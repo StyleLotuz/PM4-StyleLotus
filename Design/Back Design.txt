@@ -1,0 +1,18 @@
+Usuarios:
+
+POST /api/usuarios/registro: Registrar un nuevo usuario.
+POST /api/usuarios/login: Iniciar sesión de un usuario.
+
+Productos:
+
+GET /api/productos: Listar todos los productos.
+GET /api/productos/:id: Obtener detalles de un producto.
+POST /api/productos: Crear un nuevo producto (solo administradores).
+PUT /api/productos/:id: Actualizar un producto (solo administradores).
+DELETE /api/productos/:id: Eliminar un producto (solo administradores).
+
+Órdenes:
+
+POST /api/ordenes: Crear una nueva orden de compra.
+GET /api/ordenes/:id: Obtener detalles de una orden de compra.
+GET /api/usuarios/:id/ordenes: Listar todas las órdenes de un usuario.
