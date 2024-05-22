@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class UsersRepository {
-    private users = [
+    private users: IUser[] = [
         {
             id: 1,
             email: "john.doe@example.com",
@@ -51,11 +51,40 @@ export class UsersRepository {
             address: "202 Shibuya Crossing",
             phone: "+81-3-1234-5678",
             country: "Japan",
-            city: "Tokyo"
+            city: "Tokyo" 
         }
     ]
 
-    async getAllUsers() {
-        return this.users
+    async getAllUsers(page: number = 1, limit: number = 5): Promise<IUser[]> {
+        const startIndex = (page - 1) * limit
+        return this.users.slice(startIndex, startIndex + limit)
+    }
+
+    async getUserById(id: string): Promise<IUser> {
+        const user = this.users.find(user => user.id === Number(id))
+        return user
+    }
+
+    async createNewUser(userData: IUser): Promise<IUser> {
+        let id = this.users.length + 1
+        this.users = [...this.users, { id, ...userData }]
+        return { id, ...userData }
+    }
+
+    async modifyUser(id: string, dataToUpdate: Partial<IUser>) {
+        const userIndex = this.users.findIndex(user => user.id === Number(id))
+        const existingUser = this.users[userIndex]
+        const updatedUser = { ...existingUser, ...dataToUpdate, id: existingUser.id }
+        this.users[userIndex] = updatedUser
+
+        return updatedUser
+    }
+
+    async deleteUser(id: string): Promise<IUser> {
+        const userIndex = this.users.findIndex(user => user.id === Number(id))
+        const deleteUser = this.users[userIndex]
+        this.users.splice(userIndex, 1)
+
+        return deleteUser
     }
 }

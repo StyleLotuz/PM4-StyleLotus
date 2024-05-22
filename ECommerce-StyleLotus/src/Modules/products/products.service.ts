@@ -5,8 +5,8 @@ import { ProductsRepository } from "./products.repository";
 export class ProductsService {
     constructor(private productsRepository: ProductsRepository) { }
 
-    getAllProducts() {
-        return this.productsRepository.getAllProduct()
+    getAllProducts(page: number, limit: number) {
+        return this.productsRepository.getAllProduct(page, limit)
     }
 
     createNewProduct(product: IProduct) {

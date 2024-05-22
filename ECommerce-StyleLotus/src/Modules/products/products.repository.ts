@@ -45,8 +45,9 @@ export class ProductsRepository {
         }
     ];
 
-    async getAllProduct (){
-        return this.products
+    async getAllProduct (page: number, limit: number){
+        const startIndex = (page - 1) * 5
+        return this.products.slice(startIndex, startIndex + limit)
     }
 
     async createNewProduct(product: Omit<IProduct, 'id'>){
