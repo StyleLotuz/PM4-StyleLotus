@@ -56,8 +56,6 @@ export class UsersRepository {
     ]
 
     async getAllUsers(page: number = 1, limit: number = 5): Promise<IUser[]> {
-        const startIndex = (page - 1) * limit
-        return this.users.slice(startIndex, startIndex + limit)
     }
 
     async getUserById(id: string): Promise<IUser> {
