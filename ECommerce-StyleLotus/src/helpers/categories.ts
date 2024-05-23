@@ -1,0 +1,16 @@
+export const categoriesData = [
+  { name: 'Electronics' },
+  { name: 'Books' },
+  { name: 'Clothing' },
+  { name: 'Home and Kitchen' },
+  { name: 'Toys' },
+  { name: 'Sports' },
+  { name: 'Health' },
+  { name: 'Beauty' },
+  { name: 'Automotive' },
+  { name: 'Garden' },
+  { name: 'Tools' },
+  { name: 'Office Supplies' },
+  { name: 'Pet Supplies' },
+  { name: 'Baby Products' },
+];
