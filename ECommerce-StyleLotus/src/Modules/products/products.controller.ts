@@ -14,15 +14,10 @@ import {
 import { ProductsService } from './products.service';
 import { AuthGuard } from 'src/Guards/auth.guard';
 import { Product } from 'src/entities/product.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Category } from 'src/entities/categories.entity';
 
 @Controller('products')
 export class ProductsController {
-  constructor(
-    private readonly productsService: ProductsService
-  ) { }
+  constructor(private readonly productsService: ProductsService) {}
 
   @HttpCode(200)
   @Get()
@@ -37,7 +32,7 @@ export class ProductsController {
 
   @Get('seeder')
   seedProducts() {
-    this.productsService.seederProducts()
+    this.productsService.seederProducts();
   }
 
   @HttpCode(201)
@@ -56,7 +51,10 @@ export class ProductsController {
   @HttpCode(200)
   @Put(':id')
   @UseGuards(AuthGuard)
-  modifyProduct(@Param('id', ParseUUIDPipe) id: string, @Body() updateData: Product) {
+  modifyProduct(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateData: Product,
+  ) {
     return this.productsService.modifyProduct(id, updateData);
   }
 

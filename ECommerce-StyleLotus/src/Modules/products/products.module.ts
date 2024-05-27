@@ -7,10 +7,16 @@ import { CategoriesRepository } from '../categories/categories.repository';
 import { Category } from 'src/entities/categories.entity';
 import { User } from 'src/entities/user.entity';
 import { ProductsRepository } from './products.repository';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product, Category, User])],
   controllers: [ProductsController],
-  providers: [ProductsService, CategoriesRepository, ProductsRepository],
+  providers: [
+    ProductsService,
+    CategoriesRepository,
+    ProductsRepository,
+    CloudinaryService,
+  ],
 })
 export class ProductsModule {}

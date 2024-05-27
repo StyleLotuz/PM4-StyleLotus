@@ -7,6 +7,7 @@ import typeOrmConfig from './config/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from './Modules/categories/categories.module';
 import { OrdersModule } from './Modules/orders/orders.module';
+import { FilesModule } from './Modules/files/files.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,10 +24,9 @@ import { OrdersModule } from './Modules/orders/orders.module';
     AuthModule,
     CategoriesModule,
     OrdersModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule{
-  
-}
+export class AppModule {}
