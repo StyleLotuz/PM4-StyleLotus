@@ -16,13 +16,13 @@ export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string = uuid();
 
-  @ManyToOne(() => User, (user) => user.orders_id)
-  user_id: User;
+  @ManyToOne(() => User, (user) => user.orders)
+  user: User;
 
   @Column()
   date: Date;
 
-  @OneToOne(() => OrderDetail)
+  @OneToOne(() => OrderDetail, orderDetail => orderDetail.order)
   @JoinColumn()
   orderDetail: OrderDetail;
 }

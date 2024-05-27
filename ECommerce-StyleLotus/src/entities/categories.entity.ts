@@ -1,9 +1,9 @@
 import {
   Column,
   Entity,
-  OneToOne,
   PrimaryGeneratedColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { Product } from './product.entity';
@@ -16,7 +16,6 @@ export class Category {
   @Column({ length: 50, nullable: false })
   name: string;
 
-  @OneToOne(() => Product)
-  @JoinColumn()
-  product: Product;
+  @OneToMany(() => Product, product => product.category)
+  products: Product;
 }

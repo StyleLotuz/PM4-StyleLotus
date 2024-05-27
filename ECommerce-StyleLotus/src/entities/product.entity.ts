@@ -3,8 +3,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  OneToMany,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -31,10 +30,10 @@ export class Product {
   @Column({ default: 'https://static.thenounproject.com/png/4974686-200.png' })
   imgUrl: string;
 
-  @OneToOne(() => Category, (category) => category.product)
-  category_id: Category;
+  @ManyToOne(() => Category, (category) => category.products)
+  category: Category;
 
-  @ManyToMany(() => OrderDetail)
+  @ManyToMany(() => OrderDetail, orderdetail => orderdetail.products)
   @JoinTable()
   orderDetails: OrderDetail[];
 }

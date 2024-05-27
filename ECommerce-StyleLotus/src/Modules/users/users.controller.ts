@@ -9,10 +9,11 @@ import {
   HttpCode,
   Query,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import { AuthGuard } from 'src/Guards/auth.guard';
-import { User } from 'src/entities/user.entity';
+import { CreateUserDto } from 'src/Dtos/CreateUser.dto';
 
 @Controller('users')
 export class UsersController {
@@ -39,21 +40,21 @@ export class UsersController {
 
   @HttpCode(201)
   @Post()
-  createNewUser(@Body() userData: User) {
+  createNewUser(@Body() userData: CreateUserDto) {
     return this.usersService.createNewUser(userData);
   }
 
   @HttpCode(200)
   @Put(':id')
   @UseGuards(AuthGuard)
-  modifyUser(@Param('id') id: string, @Body() dataToUpdate: User) {
+  modifyUser(@Param('id', ParseUUIDPipe) id: string, @Body() dataToUpdate: CreateUserDto) {
     return this.usersService.modifyUser(id, dataToUpdate);
   }
 
   @HttpCode(200)
   @Delete(':id')
   @UseGuards(AuthGuard)
-  deleteUser(@Param('id') id: string) {
+  deleteUser(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.deleteUser(id);
   }
 }

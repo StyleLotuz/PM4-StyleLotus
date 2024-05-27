@@ -1,92 +1,78 @@
-// import { Injectable } from '@nestjs/common';
+import { Category } from 'src/entities/categories.entity';
+import { Injectable, NotFoundException, ParseUUIDPipe } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Product } from 'src/entities/product.entity';
+import { Repository } from 'typeorm';
 
-// @Injectable()
-// export class ProductsRepository {
-//   private products: IProduct[] = [
-//     {
-//       id: 1,
-//       name: 'Laptop',
-//       description: 'High performance laptop',
-//       price: 999.99,
-//       stock: true,
-//       imgUrl: 'https://example.com/images/laptop.jpg',
-//     },
-//     {
-//       id: 2,
-//       name: 'Smartphone',
-//       description: 'Latest model smartphone',
-//       price: 799.99,
-//       stock: true,
-//       imgUrl: 'https://example.com/images/smartphone.jpg',
-//     },
-//     {
-//       id: 3,
-//       name: 'Headphones',
-//       description: 'Noise-cancelling headphones',
-//       price: 199.99,
-//       stock: false,
-//       imgUrl: 'https://example.com/images/headphones.jpg',
-//     },
-//     {
-//       id: 4,
-//       name: 'Smartwatch',
-//       description: 'Waterproof smartwatch with GPS',
-//       price: 299.99,
-//       stock: true,
-//       imgUrl: 'https://example.com/images/smartwatch.jpg',
-//     },
-//     {
-//       id: 5,
-//       name: 'Camera',
-//       description: 'Digital camera with 4K video recording',
-//       price: 499.99,
-//       stock: false,
-//       imgUrl: 'https://example.com/images/camera.jpg',
-//     },
-//   ];
 
-//   async getAllProduct(page: number, limit: number) {
-//     const startIndex = (page - 1) * 5;
-//     return this.products.slice(startIndex, startIndex + limit);
-//   }
+@Injectable()
+export class ProductsRepository {
+    constructor(@InjectRepository(Product) private productsRepository: Repository<Product>,
+        @InjectRepository(Category) private categoryRepository: Repository<Category>) { }
 
-//   async createNewProduct(product: Omit<IProduct, 'id'>) {
-//     const id = this.products.length + 1;
-//     const newProduct = { id, ...product };
-//     this.products = [...this.products, newProduct];
-//     return newProduct;
-//   }
+    async seederProducts() {
+        try {
+            const data = await require('../../helpers/data.json')
 
-//   async getProductById(id: string) {
-//     return this.products.find((product) => product.id === Number(id));
-//   }
+            for (const dato of data) {
+                const existingProduct = await this.productsRepository.findOne({ where: { name: dato.name } })
+                if (!existingProduct) {
+                    const newProduct = new Product;
+                    newProduct.name = dato.name
+                    newProduct.description = dato.description
+                    newProduct.price = dato.price
+                    newProduct.stock = dato.stock
+                    newProduct.imgUrl = dato.imgUrl
+                    const category = await this.categoryRepository.findOne({ where: { name: dato.category } })
+                    newProduct.category = category
+                    await this.productsRepository.save(newProduct)
+                }
+            }
+        } catch (err) {
+            console.log('Error al realizar la carga de los productos');
+            throw new Error('Error al cargar los productos')
+        }
+    }
 
-//   async modifyProduct(id: string, updateData: Partial<IProduct>) {
-//     const productIndex = this.products.findIndex(
-//       (product) => product.id === Number(id),
-//     );
-//     if (productIndex === -1) {
-//       throw new Error('There was an error');
-//     }
+    async getAllProduct(page: number, limit: number) {
+        const startIndex = (page - 1) * limit;
+        try {
+            const [products] = await this.productsRepository.findAndCount({
+                skip: startIndex,
+                take: limit,
+            });
+            return products;
+        } catch (err) {
+            console.error('Error fetching products', err);
+            throw new Error('Could not fetching products');
+        }
+    }
 
-//     const existingProduct = this.products[productIndex];
-//     const updatedProduct = {
-//       ...existingProduct,
-//       ...updateData,
-//       id: existingProduct.id,
-//     };
-//     this.products[productIndex] = updatedProduct;
+    async createNewProduct(product: Product) {
+        return this.productsRepository.save(product);
+    }
 
-//     return updatedProduct;
-//   }
+    async getProductById(id: string) {
+        const product = await this.productsRepository.findOne({ where: { id } });
 
-//   async deleteProduct(id: string): Promise<IProduct> {
-//     const productIndex = this.products.findIndex(
-//       (product) => product.id === Number(id),
-//     );
-//     const deletedProduct = this.products[productIndex];
-//     this.products.splice(productIndex, 1);
+        if (!product) throw new NotFoundException('Product not found')
 
-//     return deletedProduct;
-//   }
-// }
+        return product
+    }
+
+    async modifyProduct(id: string, updateData: Partial<Product>) {
+        const productUpdated = await this.productsRepository.update(id, updateData);
+
+        if (!productUpdated) throw new NotFoundException('No se encontro el producto para actualizar')
+
+        return productUpdated
+    }
+
+    async deleteProduct(id: string) {
+        const deletedProduct = await this.productsRepository.delete(id);
+
+        if (!deletedProduct) throw new NotFoundException('Product to delete does not exist')
+
+        return deletedProduct
+    }
+}

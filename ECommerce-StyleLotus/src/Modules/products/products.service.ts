@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { ProductsRepository } from './products.repository';
+import { Injectable, ParseUUIDPipe } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/entities/product.entity';
 import { Repository } from 'typeorm';
@@ -6,36 +7,30 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class ProductsService {
   constructor(
-    @InjectRepository(Product) private productsRepository: Repository<Product>,
-  ) {}
+    private readonly productsRepository: ProductsRepository
+  ) { }
 
-  async getAllProducts(page: number, limit: number) {
-    const startIndex = (page - 1) * limit;
-    try {
-      const [products] = await this.productsRepository.findAndCount({
-        skip: startIndex,
-        take: limit,
-      });
-      return products;
-    } catch (err) {
-      console.error('Error fetching products', err);
-      throw new Error('Could not fetching products');
-    }
+  seederProducts(){
+    this.productsRepository.seederProducts()
+  }
+
+  getAllProducts(page: number, limit: number) {
+    return this.productsRepository.getAllProduct(page, limit)
   }
 
   createNewProduct(product: Product) {
-    return this.productsRepository.save(product);
+    this.productsRepository.createNewProduct(product)
   }
 
   getProductById(id: string) {
-    return this.productsRepository.findOneBy({ id });
+    this.productsRepository.getProductById(id)
   }
 
   modifyProduct(id: string, updateData: Product) {
-    return this.productsRepository.update(id, updateData);
+    this.productsRepository.modifyProduct(id, updateData)
   }
 
   deleteProduct(id: string) {
-    return this.productsRepository.delete(id);
+    this.productsRepository.deleteProduct(id)
   }
 }

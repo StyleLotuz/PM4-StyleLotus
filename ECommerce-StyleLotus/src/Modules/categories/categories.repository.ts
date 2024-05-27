@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/entities/categories.entity';
-import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -9,13 +8,25 @@ export class CategoriesRepository {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
-  async addCategories(id: string, item: Category) {
-    const newCategory = await this.categoriesRepository.save(item);
-    return newCategory;
+  async addCategories() {
+    
+    try {
+      const data = await require('../../helpers/data.json')
+      
+      for (const dato of data) {
+        const existingCategory = await this.categoriesRepository.findOne({ where: { name: dato.category } })
+        if (!existingCategory) {
+          const category = new Category;
+          category.name = dato.category;
+          await this.categoriesRepository.save(category)
+        }
+      }
+    } catch (error) {
+      console.log('Error al importar o procesar el archivo data.json:', error);
+      throw new Error('Error importando el data.json')
+    }
   }
 
   async getCategories() {

@@ -1,29 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/entities/orders.entity';
+import { Product } from 'src/entities/product.entity';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
+import { OrdersRepository } from './orders.repository';
+import { CreateOrderDto } from 'src/Dtos/CreateOrder.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectRepository(Order) private orderRepository: Repository<Order>,
+    private readonly orderRepository: OrdersRepository,
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  addOrder(id: string) {
-    try {
-      const user = this.usersRepository.findOneBy({ id });
-      const newDate = new Date();
-      const formattedDate = newDate.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      });
-      const newOrder = this.usersRepository.save();
-    } catch (err) {
-      console.error('Error fetching order', err);
-      throw new Error('Error fetching new Order');
-    }
+  addOrder(orderInfo: CreateOrderDto) {
+    this.orderRepository.addOrder(orderInfo)
+  }
+
+  getOrder(id: string){
+    this.orderRepository.getOrder(id)
   }
 }

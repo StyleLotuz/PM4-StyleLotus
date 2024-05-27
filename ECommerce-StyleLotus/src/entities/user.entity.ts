@@ -19,14 +19,14 @@ export class User {
   phone: number;
 
   @Column({ length: 50 })
-  country: string;
+  country?: string;
 
   @Column()
   address: string;
 
   @Column({ length: 50 })
-  city: string;
+  city?: string;
 
-  @OneToMany(() => Order, (order) => order.user_id)
-  orders_id: Order[];
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }
