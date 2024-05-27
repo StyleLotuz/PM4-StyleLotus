@@ -13,9 +13,9 @@ export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string = uuid();
 
-  @Column({ length: 50, nullable: false })
+  @Column({ length: 50, nullable: false, type: 'varchar', unique: true })
   name: string;
 
-  @OneToMany(() => Product, product => product.category)
+  @OneToMany(() => Product, (product) => product.category)
   products: Product;
 }

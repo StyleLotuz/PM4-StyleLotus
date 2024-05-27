@@ -29,7 +29,7 @@ export class FilesController {
             message: 'El archivo debe ser menor a 200kb',
           }),
           new FileTypeValidator({
-            fileType: /(jpg|jpeg|png|webp)/,
+            fileType: /(jpg|jpeg|png|webp)$/,
           }),
         ],
       }),
