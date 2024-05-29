@@ -1,30 +1,33 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Request } from 'express';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-
-const validateRequest = (req: Request) => {
-  const authorization = req.headers['authorization'];
-
-  if (!authorization) return false;
-
-  const authHeaderParts = authorization.split(' ');
-  if (authHeaderParts.length !== 2 || authHeaderParts[0] !== 'Basic')
-    return false;
-
-  const credentials = authHeaderParts[1].split(':');
-  const [email, password] = credentials;
-
-  if (!email || !password) return false;
-
-  return true;
-};
+import * as dotenv from 'dotenv'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(private readonly jwtService: JwtService) { }
+
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    return validateRequest(request);
+
+    const token = request.headers['authorization']?.split(' ')[1] ?? ""
+
+    if (!token) throw new UnauthorizedException('Basic token not found')
+
+    try {
+      const secret = process.env.JWT_SECRET
+      const payload = this.jwtService.verify(token, { secret })
+      request.user = payload
+
+      payload.exp = new Date(payload.exp)
+      payload.iat = new Date(payload.iat)
+      request.user.exp = payload.exp
+      return true
+    } catch (err) {
+      throw new UnauthorizedException('Invalid Token')
+    }
+
   }
 }

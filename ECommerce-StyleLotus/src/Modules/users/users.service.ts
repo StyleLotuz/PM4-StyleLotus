@@ -19,29 +19,37 @@ export class UserService {
         take: limit,
       });
 
-      return users;
+      const usersWithoutPasswords = users.map(user => {
+        const { password, ...userWithoutPassword } = user
+        return userWithoutPassword
+      })
+
+      return usersWithoutPasswords
+
     } catch (err) {
       console.error('Error fetching users', err);
       throw new Error('Could not fetch users');
     }
   }
 
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: string): Promise<Omit<User,'password'>> {
     const user = await this.usersRepository.findOne({ where: { id }, relations: { orders: true } });
 
     if (!user) throw new NotFoundException('User not found')
 
-    return user
+    const { password, ...userWithoutPassword } = user
+
+    return userWithoutPassword
   }
 
-  async createNewUser(userData: CreateUserDto) {
-    try {
-      return await this.usersRepository.save(userData);
-    } catch (err) {
-      console.error('Error creating user ', err);
-      throw new Error('Could not create user');
-    }
-  }
+  // async createNewUser(userData: CreateUserDto) {
+  //   try {
+  //     return await this.usersRepository.save(userData);
+  //   } catch (err) {
+  //     console.error('Error creating user ', err);
+  //     throw new Error('Could not create user');
+  //   }
+  // }
 
   async modifyUser(id: string, userData: CreateUserDto) {
     try {
