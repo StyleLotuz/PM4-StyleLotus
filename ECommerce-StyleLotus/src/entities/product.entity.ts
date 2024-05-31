@@ -33,7 +33,7 @@ export class Product {
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
-  @ManyToMany(() => OrderDetail, orderdetail => orderdetail.products)
+  @ManyToMany(() => OrderDetail, (orderdetail) => orderdetail.products)
   @JoinTable()
   orderDetails: OrderDetail[];
 }

@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async getAllUser(page: number, limit: number) {
     const startIndex = (page - 1) * limit;
@@ -19,27 +19,29 @@ export class UserService {
         take: limit,
       });
 
-      const usersWithoutPasswords = users.map(user => {
-        const { password, ...userWithoutPassword } = user
-        return userWithoutPassword
-      })
+      const usersWithoutPasswords = users.map((user) => {
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
 
-      return usersWithoutPasswords
-
+      return usersWithoutPasswords;
     } catch (err) {
       console.error('Error fetching users', err);
       throw new Error('Could not fetch users');
     }
   }
 
-  async getUserById(id: string): Promise<Omit<User,'password'>> {
-    const user = await this.usersRepository.findOne({ where: { id }, relations: { orders: true } });
+  async getUserById(id: string): Promise<Omit<User, 'password'>> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: { orders: true },
+    });
 
-    if (!user) throw new NotFoundException('User not found')
+    if (!user) throw new NotFoundException('User not found');
 
-    const { password, ...userWithoutPassword } = user
+    const { password: pass, ...userWithoutPassword } = user;
 
-    return userWithoutPassword
+    return userWithoutPassword;
   }
 
   // async createNewUser(userData: CreateUserDto) {
@@ -55,9 +57,9 @@ export class UserService {
     try {
       const user = await this.usersRepository.update(id, userData);
 
-      if (!user) throw new NotFoundException('User to update not found')
+      if (!user) throw new NotFoundException('User to update not found');
 
-      return user
+      return user;
     } catch (err) {
       console.error('Error updating user', err);
       throw new Error('Could not update user');

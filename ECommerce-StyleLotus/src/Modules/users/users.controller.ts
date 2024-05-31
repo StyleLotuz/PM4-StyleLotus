@@ -14,6 +14,9 @@ import {
 import { UserService } from './users.service';
 import { AuthGuard } from 'src/Guards/auth.guard';
 import { CreateUserDto } from 'src/Dtos/CreateUser.dto';
+import { RolesGuard } from 'src/Guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enum/roles.enum';
 
 @Controller('users')
 export class UsersController {
@@ -21,7 +24,8 @@ export class UsersController {
 
   @HttpCode(200)
   @Get()
-  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   getAllUsers(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '5',
@@ -47,7 +51,10 @@ export class UsersController {
   @HttpCode(200)
   @Put(':id')
   @UseGuards(AuthGuard)
-  modifyUser(@Param('id', ParseUUIDPipe) id: string, @Body() dataToUpdate: CreateUserDto) {
+  modifyUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dataToUpdate: CreateUserDto,
+  ) {
     return this.usersService.modifyUser(id, dataToUpdate);
   }
 
