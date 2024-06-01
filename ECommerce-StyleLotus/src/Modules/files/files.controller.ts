@@ -6,16 +6,19 @@ import {
   ParseFilePipe,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Product } from 'src/entities/product.entity';
+import { AuthGuard } from 'src/Guards/auth.guard';
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly fileService: FilesService) {}
 
+  @UseGuards(AuthGuard)
   @Post('upload/:id')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(

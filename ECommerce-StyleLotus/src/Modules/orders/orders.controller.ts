@@ -15,7 +15,7 @@ export class OrdersController {
   }
 
   @UseGuards(AuthGuard)
-  @Get(':id')
+  @Get(':id') 
   getOrder(@Param('id', ParseUUIDPipe) id: string) {
     return this.ordersService.getOrder(id)
   }
