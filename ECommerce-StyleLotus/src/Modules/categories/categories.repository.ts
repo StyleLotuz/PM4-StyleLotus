@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/entities/categories.entity';
 import { Repository } from 'typeorm';
+import * as data from '../../helpers/data.json'
 
 @Injectable()
 export class CategoriesRepository {
@@ -12,9 +13,7 @@ export class CategoriesRepository {
 
   async addCategories() {
     
-    try {
-      const data = await require('../../helpers/data.json')
-      
+    try {      
       for (const dato of data) {
         const existingCategory = await this.categoriesRepository.findOne({ where: { name: dato.category } })
         if (!existingCategory) {

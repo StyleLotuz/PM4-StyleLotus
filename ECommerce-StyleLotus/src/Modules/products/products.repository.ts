@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/entities/product.entity';
 import { Repository } from 'typeorm';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import * as data from '../../helpers/data.json'
 
 @Injectable()
 export class ProductsRepository {
@@ -16,8 +17,6 @@ export class ProductsRepository {
 
   async seederProducts() {
     try {
-      const data = await require('../../helpers/data.json');
-
       for (const dato of data) {
         const existingProduct = await this.productsRepository.findOne({
           where: { name: dato.name },

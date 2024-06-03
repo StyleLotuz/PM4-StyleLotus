@@ -13,12 +13,15 @@ import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Product } from 'src/entities/product.entity';
 import { AuthGuard } from 'src/Guards/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Files')
 @Controller('files')
 export class FilesController {
   constructor(private readonly fileService: FilesService) {}
 
-  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard) 
   @Post('upload/:id')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(

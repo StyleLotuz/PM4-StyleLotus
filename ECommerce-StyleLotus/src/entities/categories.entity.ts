@@ -10,6 +10,9 @@ import { Product } from './product.entity';
 
 @Entity('categories')
 export class Category {
+  /** 
+   *  El id debe ser de tipo uuid
+   * */ 
   @PrimaryGeneratedColumn('uuid')
   id: string = uuid();
 
