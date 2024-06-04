@@ -13,7 +13,7 @@ export class ProductsRepository {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     private readonly cloudinaryService: CloudinaryService,
-  ) {}
+  ) { }
 
   async seederProducts() {
     try {
@@ -56,13 +56,21 @@ export class ProductsRepository {
   }
 
   async createNewProduct(product: Product) {
-    return this.productsRepository.save(product);
+    try {
+      return this.productsRepository.save(product);
+    } catch (err) {
+      throw new Error('Could save a new Product')
+    }
   }
 
   async getProductById(id: string): Promise<Product> {
+    try{
     const product = await this.productsRepository.findOne({ where: { id } });
     if (!product) throw new NotFoundException('Product not found');
     return product;
+  }catch(err){
+    throw new Error(`Could not find the product with id ${id}`)
+  }
   }
 
   async modifyProduct(id: string, updateData: Partial<Product>) {
