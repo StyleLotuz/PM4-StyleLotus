@@ -47,7 +47,7 @@ export class ProductsController {
     return this.productsService.createNewProduct(product);
   }
 
-  @HttpCode(201)
+  @HttpCode(200)
   @Get(':id')
   getProductById(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.getProductById(id);

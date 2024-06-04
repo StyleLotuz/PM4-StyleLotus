@@ -59,11 +59,9 @@ export class ProductsRepository {
     return this.productsRepository.save(product);
   }
 
-  async getProductById(id: string) {
+  async getProductById(id: string): Promise<Product> {
     const product = await this.productsRepository.findOne({ where: { id } });
-
     if (!product) throw new NotFoundException('Product not found');
-
     return product;
   }
 

@@ -22,8 +22,8 @@ export class ProductsService {
     this.productsRepository.createNewProduct(product)
   }
 
-  getProductById(id: string) {
-    this.productsRepository.getProductById(id)
+  getProductById(id: string): Promise<Product> {
+    return this.productsRepository.getProductById(id)
   }
 
   modifyProduct(id: string, updateData: Product) {
