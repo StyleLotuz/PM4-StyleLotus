@@ -1,6 +1,13 @@
-import { ArrayNotEmpty, IsArray, IsNotEmpty, IsUUID } from "class-validator";
-import { Product } from "src/entities/product.entity";
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsEmpty,
+  IsNotEmpty,
+  IsUUID,
+} from 'class-validator';
+import { Product } from 'src/entities/product.entity';
 
+<<<<<<< Updated upstream
 export class CreateOrderDto{
     /** 
      * El user ID debe ser de tipo UUID
@@ -24,3 +31,17 @@ export class CreateOrderDto{
     @ArrayNotEmpty()
     products: Partial<Product[]>
 }
+=======
+export class CreateOrderDto {
+  @IsNotEmpty()
+  @IsUUID('4')
+  userId: string;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  products: Partial<Product[]>;
+
+  @IsEmpty()
+  isAdmin?: boolean;
+}
+>>>>>>> Stashed changes
