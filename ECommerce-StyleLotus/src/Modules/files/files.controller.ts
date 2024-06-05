@@ -21,7 +21,7 @@ export class FilesController {
   constructor(private readonly fileService: FilesService) {}
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard) 
+  @UseGuards(AuthGuard)
   @Post('upload/:id')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(

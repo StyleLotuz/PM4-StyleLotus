@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/Dtos/CreateUser.dto';
+import { Order } from 'src/entities/orders.entity';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 
@@ -8,6 +13,7 @@ import { Repository } from 'typeorm';
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(Order) private orderRepository: Repository<Order>,
   ) {}
 
   async getAllUser(page: number, limit: number) {
@@ -20,7 +26,7 @@ export class UserService {
       });
 
       const usersWithoutPasswords = users.map((user) => {
-        const { password, ...userWithoutPassword } = user;
+        const { isAdmin, password, ...userWithoutPassword } = user;
         return userWithoutPassword;
       });
 
@@ -31,7 +37,7 @@ export class UserService {
     }
   }
 
-  async getUserById(id: string): Promise<Omit<User, 'password'>> {
+  async getUserById(id: string): Promise<Omit<User, 'password' | 'isAdmin'>> {
     const user = await this.usersRepository.findOne({
       where: { id },
       relations: { orders: true },
@@ -39,7 +45,7 @@ export class UserService {
 
     if (!user) throw new NotFoundException('User not found');
 
-    const { password: pass, ...userWithoutPassword } = user;
+    const { isAdmin: _, password: pass, ...userWithoutPassword } = user;
 
     return userWithoutPassword;
   }
@@ -53,7 +59,7 @@ export class UserService {
   //   }
   // }
 
-  async modifyUser(id: string, userData: CreateUserDto) {
+  async modifyUser(id: string, userData: Partial<CreateUserDto>) {
     try {
       const user = await this.usersRepository.update(id, userData);
 
@@ -67,6 +73,25 @@ export class UserService {
   }
 
   async deleteUser(id: string) {
-    return await this.usersRepository.delete(id);
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id },
+        relations: ['orders'],
+      });
+
+      if (!user) throw new NotFoundException('User not found');
+
+      const ordersId = user.orders.map((order) => order.id);
+
+      if (ordersId.length > 0) {
+        await this.orderRepository.delete(ordersId);
+      }
+
+      return await this.usersRepository.delete(id);
+    } catch (err) {
+      throw new BadRequestException(
+        `The delete operation was not completed, error ${err}`,
+      );
+    }
   }
 }

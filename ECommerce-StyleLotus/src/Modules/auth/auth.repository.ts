@@ -10,6 +10,7 @@ import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from 'src/enum/roles.enum';
 
 @Injectable()
 export class AuthRepository {
@@ -36,7 +37,7 @@ export class AuthRepository {
       sub: user.id,
       id: user.id,
       email: user.email,
-      isAdmin: user.isAdmin,
+      role: user.isAdmin ? Role.ADMIN : Role.USER,
     };
 
     const token = this.jwtService.sign(userPayload);
@@ -60,8 +61,11 @@ export class AuthRepository {
     const newUser = await this.usersRepository.save({
       ...userData,
       password: hashedPassword,
-      isAdmin: false,
+      isAdmin: true,
     });
+
+    console.log(newUser.id, 'User ID');
+
     const {
       isAdmin: admin,
       confirmPassword: confirmP,

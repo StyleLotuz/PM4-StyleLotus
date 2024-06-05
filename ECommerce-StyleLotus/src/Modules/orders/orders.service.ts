@@ -15,10 +15,10 @@ export class OrdersService {
   ) {}
 
   addOrder(orderInfo: CreateOrderDto) {
-    this.orderRepository.addOrder(orderInfo)
+    return this.orderRepository.addOrder(orderInfo);
   }
 
-  getOrder(id: string){
-    this.orderRepository.getOrder(id)
+  getOrder(id: string) {
+    return this.orderRepository.getOrder(id);
   }
 }

@@ -6,17 +6,12 @@ import { CreateUserDto } from 'src/Dtos/CreateUser.dto';
 
 @Injectable()
 export class AuthService {
-  
   constructor(private readonly authRepository: AuthRepository) {}
   login(loginUserData: LoginUserDto) {
     return this.authRepository.login(loginUserData);
   }
 
-  authUsers(): string {
-    return 'Auth Service';
-  }
-
   signUp(userData: CreateUserDto) {
-    return this.authRepository.signUp(userData)
+    return this.authRepository.signUp(userData);
   }
 }

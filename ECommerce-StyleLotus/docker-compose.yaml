@@ -3,19 +3,21 @@ version: '3.8'
 services:
   nestapp:
     build: ./
-    ports: 
+    ports:
       - "3001:3000"
-    env_file: 
+    env_file:
       - ".env.development"
     depends_on:
       - henryecommerce
 
-  henryecommerce: 
+  henryecommerce:
     image: postgres
-    volumes: 
+    ports:
+      - "3077:5432"
+    volumes:
       - pgdata:/var/lib/postgresql/data
     env_file:
       - ".env.development"
 
-volumes: 
+volumes:
   pgdata:

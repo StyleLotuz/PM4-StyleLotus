@@ -6,31 +6,32 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    private readonly productsRepository: ProductsRepository
-  ) { }
+  constructor(private readonly productsRepository: ProductsRepository) {}
 
-  seederProducts(){
-    this.productsRepository.seederProducts()
+  seederProducts() {
+    return this.productsRepository.seederProducts();
   }
 
   getAllProducts(page: number, limit: number) {
-    return this.productsRepository.getAllProduct(page, limit)
+    return this.productsRepository.getAllProduct(page, limit);
   }
 
-  createNewProduct(product: Product) {
-    this.productsRepository.createNewProduct(product)
+  createNewProduct(product: Product & { categoryId: string }) {
+    console.log(product);
+    return this.productsRepository.createNewProduct(product);
   }
 
   getProductById(id: string): Promise<Product> {
-    return this.productsRepository.getProductById(id)
+    return this.productsRepository.getProductById(id);
   }
 
-  modifyProduct(id: string, updateData: Product) {
-    this.productsRepository.modifyProduct(id, updateData)
+  modifyProduct(id: string, updateData: Partial<Product>) {
+    console.log(id);
+    console.log(updateData);
+    return this.productsRepository.modifyProduct(id, updateData);
   }
 
   deleteProduct(id: string) {
-    this.productsRepository.deleteProduct(id)
+    return this.productsRepository.deleteProduct(id);
   }
 }

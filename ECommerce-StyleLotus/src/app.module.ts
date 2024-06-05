@@ -9,8 +9,18 @@ import { CategoriesModule } from './Modules/categories/categories.module';
 import { OrdersModule } from './Modules/orders/orders.module';
 import { FilesModule } from './Modules/files/files.module';
 import { JwtModule } from '@nestjs/jwt';
+import { CloudinaryModule } from './Modules/cloudinary/cloudinary.module';
+import { CategoriesController } from './Modules/categories/categories.controller';
+import { ProductsController } from './Modules/products/products.controller';
+import { CategoriesService } from './Modules/categories/categories.service';
+import { ProductsService } from './Modules/products/products.service';
+import { CategoriesRepository } from './Modules/categories/categories.repository';
+import { ProductsRepository } from './Modules/products/products.repository';
+import { Product } from './entities/product.entity';
+import { Category } from './entities/categories.entity';
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Product, Category]),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeOrmConfig],
@@ -25,7 +35,7 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: {
         expiresIn: '1h',
       },
-      secret: process.env.JWT_SECRET
+      secret: process.env.JWT_SECRET,
     }),
     UsersModule,
     ProductsModule,
@@ -33,8 +43,27 @@ import { JwtModule } from '@nestjs/jwt';
     CategoriesModule,
     OrdersModule,
     FilesModule,
+    CloudinaryModule,
+    CategoriesModule,
+    ProductsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    CategoriesController,
+    ProductsController,
+    CategoriesService,
+    ProductsService,
+    CategoriesRepository,
+    ProductsRepository,
+  ],
 })
-export class AppModule { }
+export class AppModule {
+  constructor(
+    private readonly categoriesController: CategoriesController,
+    private readonly productsController: ProductsController,
+  ) {}
+  async onApplicationBootstrap() {
+    await this.categoriesController.seedCategories();
+    await this.productsController.seedProducts();
+  }
+}

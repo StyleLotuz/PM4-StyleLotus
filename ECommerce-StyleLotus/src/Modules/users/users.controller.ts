@@ -26,8 +26,8 @@ export class UsersController {
 
   @HttpCode(200)
   @Get()
-  @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard, RolesGuard)
+  // @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard)
   getAllUsers(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '5',
@@ -49,7 +49,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   modifyUser(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dataToUpdate: CreateUserDto,
+    @Body() dataToUpdate: Partial<CreateUserDto>,
   ) {
     return this.usersService.modifyUser(id, dataToUpdate);
   }

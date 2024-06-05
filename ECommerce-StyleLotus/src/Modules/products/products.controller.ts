@@ -37,13 +37,13 @@ export class ProductsController {
 
   @Get('seeder')
   seedProducts() {
-    this.productsService.seederProducts();
+    return this.productsService.seederProducts();
   }
 
   @HttpCode(201)
   @Post()
-  @UseGuards(AuthGuard)
-  createNewProduct(@Body() product: Product) {
+  // @UseGuards(AuthGuard)
+  createNewProduct(@Body() product: Product & { categoryId: string }) {
     return this.productsService.createNewProduct(product);
   }
 
@@ -59,8 +59,10 @@ export class ProductsController {
   @UseGuards(AuthGuard, RolesGuard)
   modifyProduct(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateData: Product,
+    @Body() updateData: Partial<Product>,
   ) {
+    console.log(id);
+    console.log(updateData);
     return this.productsService.modifyProduct(id, updateData);
   }
 

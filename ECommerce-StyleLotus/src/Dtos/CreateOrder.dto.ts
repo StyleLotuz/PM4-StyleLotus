@@ -7,17 +7,16 @@ import {
 } from 'class-validator';
 import { Product } from 'src/entities/product.entity';
 
-<<<<<<< Updated upstream
-export class CreateOrderDto{
-    /** 
-     * El user ID debe ser de tipo UUID
-     * @example: 3f9d7cda-5d6c-4c3d-8a1e-2d8f4b5e5c29
-    */
-    @IsNotEmpty()
-    @IsUUID('4')
-    userId: string;
+export class CreateOrderDto {
+  /**
+   * El user ID debe ser de tipo UUID
+   * @example: 3f9d7cda-5d6c-4c3d-8a1e-2d8f4b5e5c29
+   */
+  @IsNotEmpty()
+  @IsUUID('4')
+  userId: string;
 
-    /** 
+  /**
      * Debe ser un Array con los productos por su uuid
      * @example: "products": [
     {"id": "7d4005f8-b74d-4d7d-884a-9b2b4a201f45"},
@@ -27,21 +26,7 @@ export class CreateOrderDto{
     {"id": "cd37b72e-f0b1-456d-ae1e-f0ac90d21c61"}
   ]
     */
-    @IsArray()
-    @ArrayNotEmpty()
-    products: Partial<Product[]>
-}
-=======
-export class CreateOrderDto {
-  @IsNotEmpty()
-  @IsUUID('4')
-  userId: string;
-
   @IsArray()
   @ArrayNotEmpty()
   products: Partial<Product[]>;
-
-  @IsEmpty()
-  isAdmin?: boolean;
 }
->>>>>>> Stashed changes

@@ -3,15 +3,15 @@ import {
   IsEmail,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
   MinLength,
-  max,
 } from 'class-validator';
 
 export class CreateUserDto {
-   /**
+  /**
    * Nombre del usuario.
    * Debe ser una cadena de texto de al menos 3 caracteres y máximo 80 caracteres.
    * @example 'John Doe'
@@ -22,16 +22,14 @@ export class CreateUserDto {
   @MaxLength(80)
   name: string;
 
-
   /**
    * Correo electrónico del usuario.
    * Debe ser una dirección de correo electrónico válida.
    * @example 'john@example.com'
-   */ 
+   */
   @IsNotEmpty()
   @IsEmail()
   email: string;
-
 
   /**
    * Contraseña del usuario.
@@ -48,7 +46,6 @@ export class CreateUserDto {
   })
   password: string;
 
-
   /**
    * Confirmación de la contraseña del usuario.
    * Debe coincidir con la contraseña.
@@ -58,7 +55,6 @@ export class CreateUserDto {
   @MinLength(8)
   @MaxLength(15)
   confirmPassword: string;
-
 
   /**
    * Dirección del usuario.
@@ -89,7 +85,7 @@ export class CreateUserDto {
   @MaxLength(20)
   country: string;
 
-/**
+  /**
    * Ciudad del usuario.
    * Debe ser una cadena de texto de al menos 5 caracteres y máximo 20 caracteres.
    * @example 'New York'
@@ -98,4 +94,8 @@ export class CreateUserDto {
   @MinLength(5)
   @MaxLength(20)
   city: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isAdmin?: boolean;
 }
