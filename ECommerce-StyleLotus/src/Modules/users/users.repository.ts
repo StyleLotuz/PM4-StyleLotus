@@ -1,91 +1,84 @@
-// import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { CreateUserDto } from "src/Dtos/CreateUser.dto";
+import { Order } from "src/entities/orders.entity";
+import { User } from "src/entities/user.entity";
+import { Repository } from "typeorm";
 
-// @Injectable()
-// export class UsersRepository {
-//   private users: IUser[] = [
-//     {
-//       id: 1,
-//       email: 'john.doe@example.com',
-//       name: 'John Doe',
-//       password: 'password123',
-//       address: '123 Main St, Apt 4B',
-//       phone: '+1-555-555-1234',
-//       country: 'USA',
-//       city: 'New York',
-//     },
-//     {
-//       id: 2,
-//       email: 'jane.smith@example.com',
-//       name: 'Jane Smith',
-//       password: 'securepassword',
-//       address: '456 Oak St',
-//       phone: '+44-20-7946-0958',
-//       country: 'UK',
-//       city: 'London',
-//     },
-//     {
-//       id: 3,
-//       email: 'pierre.dupont@example.com',
-//       name: 'Pierre Dupont',
-//       password: 'motdepasse',
-//       address: '789 Rue de Rivoli',
-//       phone: '+33-1-2345-6789',
-//       country: 'France',
-//       city: 'Paris',
-//     },
-//     {
-//       id: 4,
-//       email: 'maria.garcia@example.com',
-//       name: 'Maria Garcia',
-//       password: 'contraseña',
-//       address: '101 La Rambla',
-//       phone: '+34-93-123-4567',
-//       country: undefined,
-//       city: undefined,
-//     },
-//     {
-//       id: 5,
-//       email: 'akio.tanaka@example.com',
-//       name: 'Akio Tanaka',
-//       password: 'パスワード',
-//       address: '202 Shibuya Crossing',
-//       phone: '+81-3-1234-5678',
-//       country: 'Japan',
-//       city: 'Tokyo',
-//     },
-//   ];
+@Injectable()
+export class UsersRepository {
+    constructor(
+        @InjectRepository(User) private usersRepository: Repository<User>,
+        @InjectRepository(Order) private orderRepository: Repository<Order>,
+    ) { }
 
-//   async getAllUsers(page: number = 1, limit: number = 5): Promise<IUser[]> {}
+    async getAllUser(page: number, limit: number) {
+        const startIndex = (page - 1) * limit;
+        try {
+            const [users] = await this.usersRepository.findAndCount({
+                skip: startIndex,
+                take: limit,
+            });
 
-//   async getUserById(id: string): Promise<IUser> {
-//     const user = this.users.find((user) => user.id === Number(id));
-//     return user;
-//   }
+            const usersWithoutPasswords = users.map((user) => {
+                const { isAdmin, password, ...userWithoutPassword } = user;
+                return userWithoutPassword;
+            });
 
-//   async createNewUser(userData: IUser): Promise<IUser> {
-//     const id = this.users.length + 1;
-//     this.users = [...this.users, { id, ...userData }];
-//     return { id, ...userData };
-//   }
+            return usersWithoutPasswords;
+        } catch (err) {
+            console.error('Error fetching users', err);
+            throw new Error('Could not fetch users');
+        }
+    }
 
-//   async modifyUser(id: string, dataToUpdate: Partial<IUser>) {
-//     const userIndex = this.users.findIndex((user) => user.id === Number(id));
-//     const existingUser = this.users[userIndex];
-//     const updatedUser = {
-//       ...existingUser,
-//       ...dataToUpdate,
-//       id: existingUser.id,
-//     };
-//     this.users[userIndex] = updatedUser;
+    async getUserById(id: string): Promise<Omit<User, 'password' | 'isAdmin'>> {
+        const user = await this.usersRepository.findOne({
+            where: { id },
+            relations: { orders: true },
+        });
 
-//     return updatedUser;
-//   }
+        if (!user) throw new NotFoundException('User not found');
 
-//   async deleteUser(id: string): Promise<IUser> {
-//     const userIndex = this.users.findIndex((user) => user.id === Number(id));
-//     const deleteUser = this.users[userIndex];
-//     this.users.splice(userIndex, 1);
+        const { isAdmin: _, password: pass, ...userWithoutPassword } = user;
 
-//     return deleteUser;
-//   }
-// }
+        return userWithoutPassword;
+    }
+
+
+    async modifyUser(id: string, userData: Partial<CreateUserDto>) {
+        try {
+            const user = await this.usersRepository.update(id, userData);
+
+            if (!user) throw new NotFoundException('User to update not found');
+
+            return user;
+        } catch (err) {
+            console.error('Error updating user', err);
+            throw new Error('Could not update user');
+        }
+    }
+
+    async deleteUser(id: string) {
+        try {
+            const user = await this.usersRepository.findOne({
+                where: { id },
+                relations: ['orders'],
+            });
+
+            if (!user) throw new NotFoundException('User not found');
+
+            const ordersId = user.orders.map((order) => order.id);
+
+            if (ordersId.length > 0) {
+                await this.orderRepository.delete(ordersId);
+            }
+
+            return await this.usersRepository.delete(id);
+        } catch (err) {
+            throw new BadRequestException(
+                `The delete operation was not completed, error ${err}`,
+            );
+        }
+    }
+}

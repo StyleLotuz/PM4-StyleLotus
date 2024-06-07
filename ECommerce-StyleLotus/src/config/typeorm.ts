@@ -11,9 +11,9 @@ const config = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   autoLoadEntities: true,
-  dropSchema: true,
+  // dropSchema: true,
   logging: true,
-  synchronize: true,
+  synchronize: false,
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.js, .ts}'],
 };

@@ -30,4 +30,6 @@ export class FilesService {
       throw new BadRequestException(`Error updating the image ${err}`);
     }
   }
+
+  
 }

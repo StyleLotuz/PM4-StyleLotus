@@ -16,7 +16,6 @@ export class ProductsRepository {
     @InjectRepository(Product) private productsRepository: Repository<Product>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
-    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async seederProducts() {

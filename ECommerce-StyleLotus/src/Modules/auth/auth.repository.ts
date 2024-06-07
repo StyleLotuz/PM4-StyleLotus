@@ -6,11 +6,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/Dtos/CreateUser.dto';
 import { LoginUserDto } from 'src/Dtos/LoginUser.dto';
-import { User } from 'src/entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from 'src/enum/roles.enum';
+import { Role } from '../../enum/roles.enum';
 
 @Injectable()
 export class AuthRepository {
