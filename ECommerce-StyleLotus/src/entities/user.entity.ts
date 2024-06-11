@@ -64,7 +64,7 @@ export class User {
    * Indica si el usuario es administrador o no.
    * @example true
    */
-  @Column({ default: true, name: 'isAdmin' })
+  @Column({ default: false, name: 'isAdmin' })
   isAdmin: boolean;
 
   /**

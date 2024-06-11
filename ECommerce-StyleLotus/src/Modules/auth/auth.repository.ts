@@ -61,7 +61,7 @@ export class AuthRepository {
     const newUser = await this.usersRepository.save({
       ...userData,
       password: hashedPassword,
-      isAdmin: true,
+      isAdmin: false,
     });
 
     console.log(newUser.id, 'User ID');
