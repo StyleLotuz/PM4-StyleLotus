@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import * as dotenv from 'dotenv';
 import { Role } from 'src/enum/roles.enum';
 
 @Injectable()
