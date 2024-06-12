@@ -64,8 +64,6 @@ export class AuthRepository {
       isAdmin: false,
     });
 
-    console.log(newUser.id, 'User ID');
-
     const {
       isAdmin: admin,
       confirmPassword: confirmP,
