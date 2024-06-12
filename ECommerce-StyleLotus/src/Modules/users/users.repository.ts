@@ -25,7 +25,7 @@ export class UsersRepository {
       });
 
       const usersWithoutPasswords = users.map((user) => {
-        const { isAdmin, password, ...userWithoutPassword } = user;
+        const {  password, ...userWithoutPassword } = user;
         return userWithoutPassword;
       });
 

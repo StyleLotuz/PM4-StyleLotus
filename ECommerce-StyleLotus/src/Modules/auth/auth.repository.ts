@@ -37,7 +37,7 @@ export class AuthRepository {
       sub: user.id,
       id: user.id,
       email: user.email,
-      role: user.isAdmin ? Role.ADMIN : Role.USER,
+      role: user.isAdmin ? Role.ADMIN : "",
     };
 
     const token = this.jwtService.sign(userPayload);
