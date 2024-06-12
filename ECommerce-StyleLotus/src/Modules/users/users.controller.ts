@@ -26,7 +26,7 @@ export class UsersController {
 
   @HttpCode(200)
   @Get()
-  // @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN)
   @UseGuards(AuthGuard)
   getAllUsers(
     @Query('page') page: string = '1',
